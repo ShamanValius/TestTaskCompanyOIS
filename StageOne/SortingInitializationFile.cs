@@ -27,8 +27,7 @@ namespace StageOne
             foreach (var item in dict)
             {
                 dict[item.Key].Sort();
-            }
-                
+            }                
 
             if (dict.Count != 0)
             {
@@ -45,12 +44,12 @@ namespace StageOne
             }
 
             using (StreamReader sr = File.OpenText(path))
-            {
+            {                
                 string input;
                 string section_name = null;
                 string pattern_section_name = @"^\[\w+\]$";
                 string pattern_name_value = @"\w+=\w+";
-                string error_pattern = @"\S+";
+                string pattern_error = @"\S+";
                 
                 while ((input = sr.ReadLine()) != null)
                 {
@@ -63,12 +62,17 @@ namespace StageOne
                     {
                         dict[section_name].Add(input);
                     }
-                    else if (Regex.IsMatch(input, error_pattern, RegexOptions.IgnoreCase))
+                    else if (Regex.IsMatch(input, pattern_error, RegexOptions.IgnoreCase))
                     {
                         UnrecoverableError.ErrorReadFale("Неверно сформированное имя секции или значение неверного формата!");
                         dict.Clear();
                         return;
                     }
+                }
+
+                if (dict.Count == 0)
+                {
+                    UnrecoverableError.ErrorReadFale("Файл пуст!");
                 }
             }
         }
@@ -79,11 +83,10 @@ namespace StageOne
             {
                 foreach (var item in dict)
                 {
-                    sw.Write(Convert.ToString(item.Key));
-                    sw.Write(Environment.NewLine);
-                    for (int i = 0; i < item.Value.Count; i++)
+                    sw.Write(Convert.ToString(item.Key) + Environment.NewLine);
+                    foreach(var itemList in item.Value)
                     {
-                        sw.Write(Convert.ToString(item.Value[i]) + Environment.NewLine);
+                        sw.Write(Convert.ToString(itemList + Environment.NewLine));
                     }
                     sw.Write(Environment.NewLine);    
                 }
